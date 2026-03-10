@@ -1,25 +1,29 @@
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
 :root {
-  --bg:        #0d0d0f;
-  --surface:   #17171a;
-  --border:    #2a2a30;
-  --accent:    #ff4500;
-  --accent-dim:#ff450022;
-  --text:      #e8e8ec;
-  --muted:     #6b6b78;
-  --success:   #22c55e;
+  --bg: #0d0d0f;
+  --surface: #17171a;
+  --border: #2a2a30;
+  --accent: #ff4500;
+  --accent-dim: #ff450022;
+  --text: #e8e8ec;
+  --muted: #6b6b78;
+  --success: #22c55e;
   --font-head: 'Syne', sans-serif;
   --font-body: 'Inter', sans-serif;
-  --radius:    10px;
-  --trans:     0.18s ease;
+  --radius: 10px;
+  --trans: 0.18s ease;
 }
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+}
 
 body {
   background: var(--bg);
@@ -30,7 +34,10 @@ body {
   min-height: 100vh;
 }
 
-a { color: inherit; text-decoration: none; }
+a {
+  color: inherit;
+  text-decoration: none;
+}
 
 button {
   cursor: pointer;
@@ -39,7 +46,8 @@ button {
   outline: none;
 }
 
-input, textarea {
+input,
+textarea {
   font-family: var(--font-body);
   font-size: 15px;
   outline: none;
@@ -47,20 +55,41 @@ input, textarea {
 }
 
 /* Scrollbar */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
 
 /* Animations */
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(14px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-@keyframes spin {
-  to { transform: rotate(360deg); }
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.fade-up { animation: fadeUp 0.35s ease forwards; }
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.fade-up {
+  animation: fadeUp 0.35s ease forwards;
+}
 
 .spinner {
   width: 32px;
