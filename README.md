@@ -5,7 +5,9 @@ Egy Reddit-szerű fórum webalkalmazás, ahol a felhasználók regisztráció ut
 ## Csapattagok
 
 Kádár Dóra
+
 Molnár Tamás Sándor
+
 Tóth Sándor Benedek
 
 ## Indítás
