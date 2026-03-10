@@ -15,17 +15,17 @@ class PostViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
-    # GET /api/posts/{id}/comments/
     @action(detail=True, methods=['get', 'post'], url_path='comments')
     def comments(self, request, pk=None):
-        post = self.get_object()
+        from django.shortcuts import get_object_or_404
+        from .models import Post as PostModel
+        post = get_object_or_404(PostModel, pk=pk)
 
         if request.method == 'GET':
             qs = post.comments.all()
             serializer = CommentSerializer(qs, many=True)
             return Response(serializer.data)
 
-        # POST – új komment létrehozása
         if not request.user.is_authenticated:
             return Response({'detail': 'Bejelentkezés szükséges.'}, status=401)
 
