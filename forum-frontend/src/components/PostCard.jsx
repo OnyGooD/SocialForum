@@ -2,23 +2,39 @@ import { Link } from 'react-router-dom'
 
 function timeAgo(dateStr) {
   const diff = (Date.now() - new Date(dateStr)) / 1000
-  if (diff < 60)   return `${Math.floor(diff)}mp`
-  if (diff < 3600) return `${Math.floor(diff / 60)}p`
+  if (diff < 60)    return `${Math.floor(diff)}mp`
+  if (diff < 3600)  return `${Math.floor(diff / 60)}p`
   if (diff < 86400) return `${Math.floor(diff / 3600)}ó`
   return `${Math.floor(diff / 86400)}n`
 }
 
-export default function PostCard({ post }) {
+// Kiemeli a keresési kifejezést a szövegben
+function Highlight({ text, query }) {
+  if (!query) return <>{text}</>
+  const parts = text.split(new RegExp(`(${query})`, 'gi'))
+  return (
+    <>
+      {parts.map((part, i) =>
+        part.toLowerCase() === query.toLowerCase()
+          ? <mark key={i} style={{ background: '#ff450033', color: '#ff6b35', borderRadius: 3, padding: '0 2px' }}>{part}</mark>
+          : part
+      )}
+    </>
+  )
+}
+
+export default function PostCard({ post, query = '' }) {
   return (
     <Link to={`/post/${post.id}`} style={{ display: 'block' }}>
-      <div style={{
-        background: '#17171a',
-        border: '1px solid #2a2a30',
-        borderRadius: 10,
-        padding: '18px 20px',
-        transition: '0.18s ease',
-        cursor: 'pointer',
-      }}
+      <div
+        style={{
+          background: '#17171a',
+          border: '1px solid #2a2a30',
+          borderRadius: 10,
+          padding: '18px 20px',
+          transition: '0.18s ease',
+          cursor: 'pointer',
+        }}
         onMouseEnter={e => {
           e.currentTarget.style.borderColor = '#ff4500'
           e.currentTarget.style.background = '#1c1c20'
@@ -46,21 +62,16 @@ export default function PostCard({ post }) {
         {/* Title */}
         <h2 style={{
           fontFamily: 'Syne, sans-serif',
-          fontSize: 17,
-          fontWeight: 700,
-          color: '#e8e8ec',
-          marginBottom: 8,
-          lineHeight: 1.35,
+          fontSize: 17, fontWeight: 700,
+          color: '#e8e8ec', marginBottom: 8, lineHeight: 1.35,
         }}>
-          {post.title}
+          <Highlight text={post.title} query={query} />
         </h2>
 
         {/* Preview */}
         {post.content && (
           <p style={{
-            fontSize: 14,
-            color: '#8c8c99',
-            lineHeight: 1.55,
+            fontSize: 14, color: '#8c8c99', lineHeight: 1.55,
             overflow: 'hidden',
             display: '-webkit-box',
             WebkitLineClamp: 2,
@@ -71,7 +82,7 @@ export default function PostCard({ post }) {
         )}
 
         {/* Footer */}
-        <div style={{ marginTop: 12, display: 'flex', gap: 16 }}>
+        <div style={{ marginTop: 12 }}>
           <span style={{ fontSize: 13, color: '#6b6b78' }}>
             💬 {post.comment_count ?? 0} hozzászólás
           </span>

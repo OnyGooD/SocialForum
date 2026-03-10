@@ -1,29 +1,35 @@
 from rest_framework import viewsets, permissions
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
+from django.db.models import Q
+
 from .models import Post
 from .serializers import PostSerializer
 from .permissions import IsOwnerOrReadOnly
 from comments.serializers import CommentSerializer
-from rest_framework.decorators import action
-from rest_framework.response import Response
 
 
 class PostViewSet(viewsets.ModelViewSet):
-    queryset           = Post.objects.all()
     serializer_class   = PostSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+
+    def get_queryset(self):
+        qs = Post.objects.all()
+        search = self.request.query_params.get('search', '').strip()
+        if search:
+            qs = qs.filter(Q(title__icontains=search))
+        return qs
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
     @action(detail=True, methods=['get', 'post'], url_path='comments')
     def comments(self, request, pk=None):
-        from django.shortcuts import get_object_or_404
-        from .models import Post as PostModel
-        post = get_object_or_404(PostModel, pk=pk)
+        post = get_object_or_404(Post, pk=pk)
 
         if request.method == 'GET':
-            qs = post.comments.all()
-            serializer = CommentSerializer(qs, many=True)
+            serializer = CommentSerializer(post.comments.all(), many=True)
             return Response(serializer.data)
 
         if not request.user.is_authenticated:

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import api from '../api/axios'
 import PostCard from '../components/PostCard'
-import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 export default function Home() {
@@ -9,16 +9,29 @@ export default function Home() {
   const [loading, setLoading] = useState(true)
   const { user } = useAuth()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const query = searchParams.get('q') || ''
 
   useEffect(() => {
-    api.get('/posts/')
+    setLoading(true)
+    const url = query ? `/posts/?search=${encodeURIComponent(query)}` : '/posts/'
+    api.get(url)
       .then(res => setPosts(res.data.results ?? res.data))
       .catch(console.error)
       .finally(() => setLoading(false))
-  }, [])
+  }, [query])
+
+  const heading = query
+    ? `„${query}" találatok`
+    : 'Legújabb témák'
+
+  const subtext = query
+    ? `${posts.length} találat`
+    : `${posts.length} téma összesen`
 
   return (
     <div style={{ maxWidth: 900, margin: '0 auto', padding: '32px 20px' }}>
+
       {/* Header */}
       <div style={{
         display: 'flex', alignItems: 'center',
@@ -27,15 +40,16 @@ export default function Home() {
         <div>
           <h1 style={{
             fontFamily: 'Syne, sans-serif',
-            fontSize: 28, fontWeight: 800, color: '#e8e8ec',
+            fontSize: 26, fontWeight: 800, color: '#e8e8ec',
+            transition: '0.2s ease',
           }}>
-            Legújabb témák
+            {heading}
           </h1>
           <p style={{ color: '#6b6b78', fontSize: 14, marginTop: 4 }}>
-            {posts.length} téma összesen
+            {subtext}
           </p>
         </div>
-        {user && (
+        {user && !query && (
           <button
             onClick={() => navigate('/create')}
             style={{
@@ -46,10 +60,9 @@ export default function Home() {
               fontWeight: 600,
               fontSize: 14,
               fontFamily: 'Syne, sans-serif',
-              transition: '0.18s ease',
+              border: 'none',
+              cursor: 'pointer',
             }}
-            onMouseEnter={e => e.target.style.background = '#e03d00'}
-            onMouseLeave={e => e.target.style.background = '#ff4500'}
           >
             + Új téma
           </button>
@@ -64,8 +77,12 @@ export default function Home() {
           textAlign: 'center', padding: '80px 0',
           color: '#6b6b78', fontSize: 15,
         }}>
-          <div style={{ fontSize: 40, marginBottom: 12 }}>📭</div>
-          Még nincs egy téma sem. Légy az első!
+          <div style={{ fontSize: 40, marginBottom: 12 }}>
+            {query ? '🔍' : '📭'}
+          </div>
+          {query
+            ? `Nincs találat erre: „${query}"`
+            : 'Még nincs egy téma sem. Légy az első!'}
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -73,9 +90,9 @@ export default function Home() {
             <div
               key={post.id}
               className="fade-up"
-              style={{ animationDelay: `${i * 0.05}s`, opacity: 0 }}
+              style={{ animationDelay: `${i * 0.04}s`, opacity: 0 }}
             >
-              <PostCard post={post} />
+              <PostCard post={post} query={query} />
             </div>
           ))}
         </div>
