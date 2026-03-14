@@ -10,6 +10,10 @@ React + Django alapú Reddit-szerű fórumprojekt.
 - profilkép feltöltés és bio szerkesztés
 - post like rendszer
 - keresés a témák között
+- Profil megtekintése (saját, illetve többieké)
+- Profilokon belüli témák és hozzászólások egyénenként
+- Saját profil testre szabása
+- Like-olási lehetőség
 
 ## Indítás
 
