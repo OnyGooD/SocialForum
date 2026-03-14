@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 import api from '../api/axios'
 
 const AuthContext = createContext(null)
@@ -7,12 +7,16 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  // Oldalbetöltéskor ellenőrizzük, hogy be van-e jelentkezve
+  const refreshUser = async () => {
+    const me = await api.get('/users/me/')
+    setUser(me.data)
+    return me.data
+  }
+
   useEffect(() => {
     const token = localStorage.getItem('access_token')
     if (token) {
-      api.get('/users/me/')
-        .then(res => setUser(res.data))
+      refreshUser()
         .catch(() => {
           localStorage.removeItem('access_token')
           localStorage.removeItem('refresh_token')
@@ -27,8 +31,7 @@ export function AuthProvider({ children }) {
     const res = await api.post('/auth/login/', { username, password })
     localStorage.setItem('access_token', res.data.access)
     localStorage.setItem('refresh_token', res.data.refresh)
-    const me = await api.get('/users/me/')
-    setUser(me.data)
+    await refreshUser()
   }
 
   const register = async (username, email, password) => {
@@ -43,7 +46,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, setUser, refreshUser, loading, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   )

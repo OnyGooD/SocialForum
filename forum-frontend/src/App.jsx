@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import Navbar from './components/Navbar'
 import Home from './pages/Home'
@@ -6,6 +6,7 @@ import PostDetail from './pages/PostDetail'
 import CreatePost from './pages/CreatePost'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import ProfilePage from './pages/ProfilePage'
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth()
@@ -18,13 +19,12 @@ function AppRoutes() {
     <>
       <Navbar />
       <Routes>
-        <Route path="/"            element={<Home />} />
-        <Route path="/post/:id"    element={<PostDetail />} />
-        <Route path="/login"       element={<Login />} />
-        <Route path="/register"    element={<Register />} />
-        <Route path="/create"      element={
-          <ProtectedRoute><CreatePost /></ProtectedRoute>
-        } />
+        <Route path="/" element={<Home />} />
+        <Route path="/post/:id" element={<PostDetail />} />
+        <Route path="/u/:username" element={<ProfilePage />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/create" element={<ProtectedRoute><CreatePost /></ProtectedRoute>} />
       </Routes>
     </>
   )
