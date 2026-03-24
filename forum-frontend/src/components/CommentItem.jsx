@@ -1,11 +1,12 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import api from '../api/axios'
 
 function timeAgo(dateStr) {
   const diff = (Date.now() - new Date(dateStr)) / 1000
-  if (diff < 60)    return `${Math.floor(diff)}mp`
-  if (diff < 3600)  return `${Math.floor(diff / 60)}p`
+  if (diff < 60) return `${Math.floor(diff)}mp`
+  if (diff < 3600) return `${Math.floor(diff / 60)}p`
   if (diff < 86400) return `${Math.floor(diff / 3600)}ó`
   return `${Math.floor(diff / 86400)}n`
 }
@@ -27,64 +28,37 @@ export default function CommentItem({ comment, onDelete }) {
   }
 
   return (
-    <div style={{
-      display: 'flex',
-      gap: 12,
-      padding: '14px 0',
-      borderBottom: '1px solid #2a2a30',
-      animation: 'fadeUp 0.3s ease forwards',
-    }}>
-      {/* Avatar */}
+    <div style={{ display: 'flex', gap: 12, padding: '14px 0', borderBottom: '1px solid #2a2a30', animation: 'fadeUp 0.3s ease forwards' }}>
       <div style={{
-        width: 32, height: 32, borderRadius: '50%',
-        background: stringToColor(comment.author_name),
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontSize: 13, fontWeight: 700, color: '#fff', flexShrink: 0,
+        width: 32, height: 32, borderRadius: '50%', background: stringToColor(comment.author_name),
+        display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700, color: '#fff', flexShrink: 0,
       }}>
         {comment.author_name?.[0]?.toUpperCase()}
       </div>
 
       <div style={{ flex: 1 }}>
-        {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 5 }}>
-          <span style={{ fontSize: 13, fontWeight: 600, color: '#e8e8ec' }}>
+          <Link to={`/u/${comment.author_name}`} style={{ fontSize: 13, fontWeight: 600, color: '#e8e8ec', textDecoration: 'none' }}>
             u/{comment.author_name}
-          </span>
-          <span style={{ fontSize: 12, color: '#6b6b78' }}>
-            {timeAgo(comment.created_at)}
-          </span>
+          </Link>
+          <span style={{ fontSize: 12, color: '#6b6b78' }}>{timeAgo(comment.created_at)}</span>
           {user && user.username === comment.author_name && (
             <button
               onClick={handleDelete}
               disabled={deleting}
               style={{
-                marginLeft: 'auto',
-                background: 'none',
-                color: '#6b6b78',
-                fontSize: 12,
-                padding: '2px 6px',
-                borderRadius: 4,
-                border: '1px solid transparent',
-                transition: '0.15s ease',
+                marginLeft: 'auto', background: 'none', color: '#6b6b78', fontSize: 12,
+                padding: '2px 6px', borderRadius: 4, border: '1px solid transparent', transition: '0.15s ease',
               }}
-              onMouseEnter={e => {
-                e.target.style.color = '#ff4500'
-                e.target.style.borderColor = '#ff450044'
-              }}
-              onMouseLeave={e => {
-                e.target.style.color = '#6b6b78'
-                e.target.style.borderColor = 'transparent'
-              }}
+              onMouseEnter={e => { e.target.style.color = '#ff4500'; e.target.style.borderColor = '#ff450044' }}
+              onMouseLeave={e => { e.target.style.color = '#6b6b78'; e.target.style.borderColor = 'transparent' }}
             >
               törlés
             </button>
           )}
         </div>
 
-        {/* Content */}
-        <p style={{ fontSize: 14, color: '#c8c8d0', lineHeight: 1.6 }}>
-          {comment.content}
-        </p>
+        <p style={{ fontSize: 14, color: '#c8c8d0', lineHeight: 1.6 }}>{comment.content}</p>
       </div>
     </div>
   )
